@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
@@ -42,7 +41,7 @@ namespace CookieJar.Editor.Toast
 		}
 		
 		private const float NOTIFICATION_MARGIN = 5f;
-		private const double TARGET_FRAME_TIME = 1.0 / 30.0; // 120Hz
+		private const double TARGET_FRAME_TIME = 1.0 / 30.0;
 		
 		private static readonly List<Toast> topLeftNotifications = new();
 		private static readonly List<Toast> topRightNotifications = new();
@@ -50,18 +49,14 @@ namespace CookieJar.Editor.Toast
 		private static readonly List<Toast> bottomLeftNotifications = new();
 		private static readonly List<Toast> bottomRightNotifications = new();
 		private static readonly List<Toast> bottomCenterNotifications = new();
-		private static readonly Stopwatch stopwatch = new Stopwatch();
 		
 		private static int notificationCount = 0;
-		private static long lastTick;
-		private static double accumulator;
 		private static AudioClip audioClip;
 		private static MethodInfo playClipMethod;
 
 		[InitializeOnLoadMethod]
 		private static void Init()
 		{
-			stopwatch.Start();
 			EditorApplication.update += CustomUpdateLoop;
 			EditorApplication.QueuePlayerLoopUpdate();
 			
@@ -122,16 +117,7 @@ namespace CookieJar.Editor.Toast
 		{
 			if (notificationCount <= 0) return;
 			
-			var elapsedTicks = stopwatch.ElapsedTicks - lastTick;
-			var deltaTime = (double)elapsedTicks / Stopwatch.Frequency;
-			lastTick = stopwatch.ElapsedTicks;
-			accumulator += deltaTime;
-
-			while (accumulator >= TARGET_FRAME_TIME)
-			{
-				UpdateNotifications(TARGET_FRAME_TIME);
-				accumulator -= TARGET_FRAME_TIME;
-			}
+			UpdateNotifications(TARGET_FRAME_TIME);
 
 			if (!EditorApplication.isPlaying || notificationCount > 0)
 			{
