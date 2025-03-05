@@ -129,11 +129,11 @@ namespace CookieJar.Editor.Toast
 
 			while (accumulator >= TARGET_FRAME_TIME)
 			{
-				Update(TARGET_FRAME_TIME);
+				UpdateNotifications(TARGET_FRAME_TIME);
 				accumulator -= TARGET_FRAME_TIME;
 			}
 
-			if (!EditorApplication.isPlaying)
+			if (!EditorApplication.isPlaying || notificationCount > 0)
 			{
 				EditorApplication.delayCall += () => 
 				{
@@ -143,7 +143,7 @@ namespace CookieJar.Editor.Toast
 			}
 		}
 
-		private static void Update(double deltaTime)
+		private static void UpdateNotifications(double deltaTime)
 		{
 			CheckNotificationLifetimes();
 

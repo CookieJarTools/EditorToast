@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Runtime.InteropServices;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -7,8 +9,26 @@ namespace CookieJar.Editor.Toast
 {
 	internal class Toast : EditorWindow
 	{
+		private const int DWMWA_WINDOW_CORNER_PREFERENCE = 33;
+
+		private enum DWM_WINDOW_CORNER_PREFERENCE
+		{
+			DWMWCP_DEFAULT = 0,
+			DWMWCP_DONOTROUND = 1,
+			DWMWCP_ROUND = 2,
+			DWMWCP_ROUNDSMALL = 3
+		}
+		
+		[DllImport("user32.dll")]
+		private static extern IntPtr GetActiveWindow();
+
+		[DllImport("dwmapi.dll")]
+		private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref DWM_WINDOW_CORNER_PREFERENCE pref, int attrLen);
+		
 		private const float POSITION_SPEED = 10f;
 		private const float POSITION_THRESHOLD = 0.1f;
+		private const float ROOT_CORNER_RADIUS = 9.2f;
+		private const float ROOT_BORDER_WIDTH = 2f;
 		
 		public ToastData Data { get; set; }
 		public ToastPosition ToastPosition => ToastArgs.ToastPosition;
@@ -23,6 +43,7 @@ namespace CookieJar.Editor.Toast
 		private Label messageLabel;
 		private Button closeButton;
 		private VisualElement contentContainer;
+		private ProgressBar lifetimeBar;
 		
 		public void SetupWindow(ToastData toastData)
 		{
@@ -41,6 +62,18 @@ namespace CookieJar.Editor.Toast
 				ToastSeverity.Warning => new Color(0.69f, 0.5f, 0.02f),
 				_ => new Color(0.49f, 0f, 0f)
 			};
+
+			lifetimeBar.lowValue = 0;
+			lifetimeBar.highValue = Data.ToastArgs.LifeTime;
+			
+			var lifetimeBarContainer = lifetimeBar.Children().First();
+			var lifetimeBarBackground = lifetimeBarContainer.Children().First();
+			var lifetimeBarFill = lifetimeBarBackground.Children().First();
+			if (lifetimeBarFill != null)
+			{
+				lifetimeBarFill.style.backgroundColor = backgroundColor;
+			}
+			
 			titleBar.style.backgroundColor = backgroundColor;
 			
 			closeButton.RegisterCallback<PointerEnterEvent>(evt => {
@@ -50,18 +83,38 @@ namespace CookieJar.Editor.Toast
 			closeButton.RegisterCallback<PointerLeaveEvent>(evt => {
 				closeButton.style.backgroundColor = new Color(0.31f, 0.31f, 0.31f);
 			});
+
+			EnableRoundedCorners();
+		}
+		
+		private void EnableRoundedCorners()
+		{
+			IntPtr hwnd = GetActiveWindow();
+			if (hwnd != IntPtr.Zero)
+			{
+				DWM_WINDOW_CORNER_PREFERENCE pref = DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_ROUND;
+				DwmSetWindowAttribute(hwnd, DWMWA_WINDOW_CORNER_PREFERENCE, ref pref, sizeof(int));
+			}
+			else
+			{
+				Debug.LogWarning("Failed to get window handle.");
+			}
 		}
 
 		private void CreateGUI()
 		{
-			rootVisualElement.style.borderTopWidth = 2f;
-			rootVisualElement.style.borderBottomWidth = 2f;
-			rootVisualElement.style.borderLeftWidth = 2f;
-			rootVisualElement.style.borderRightWidth = 2f;
+			rootVisualElement.style.borderTopWidth = ROOT_BORDER_WIDTH;
+			rootVisualElement.style.borderBottomWidth = ROOT_BORDER_WIDTH;
+			rootVisualElement.style.borderLeftWidth = ROOT_BORDER_WIDTH;
+			rootVisualElement.style.borderRightWidth = ROOT_BORDER_WIDTH;
 			rootVisualElement.style.borderTopColor = Color.black;
 			rootVisualElement.style.borderBottomColor = Color.black;
 			rootVisualElement.style.borderLeftColor = Color.black;
 			rootVisualElement.style.borderRightColor = Color.black;
+			rootVisualElement.style.borderTopLeftRadius = ROOT_CORNER_RADIUS;
+			rootVisualElement.style.borderTopRightRadius = ROOT_CORNER_RADIUS;
+			rootVisualElement.style.borderBottomLeftRadius = ROOT_CORNER_RADIUS;
+			rootVisualElement.style.borderBottomRightRadius = ROOT_CORNER_RADIUS;
 			
 			titleBar = new VisualElement
 			{
@@ -114,6 +167,21 @@ namespace CookieJar.Editor.Toast
 				};
 				titleBar.Add(closeButton);
 			}
+
+			lifetimeBar = new ProgressBar
+			{
+				style =
+				{
+					marginBottom = 0f,
+					marginLeft = 0f,
+					marginRight = 0f,
+					marginTop = 0f,
+					height = 6f,
+					minHeight = 6f,
+					maxHeight = 6f
+				}
+			};
+			rootVisualElement.Add(lifetimeBar);
 			
 			var messageContainer = new VisualElement();
 			rootVisualElement.Add(messageContainer);
@@ -162,7 +230,9 @@ namespace CookieJar.Editor.Toast
 
 		public bool IsLifetimeOver()
 		{
-			return Time.time - Data.TimeCreated > ToastArgs.LifeTime;
+			var currentLifeTime = Time.time - Data.TimeCreated;
+			lifetimeBar.value = ToastArgs.LifeTime - currentLifeTime;
+			return currentLifeTime > ToastArgs.LifeTime;
 		}
 
 		private void OnDestroy()
