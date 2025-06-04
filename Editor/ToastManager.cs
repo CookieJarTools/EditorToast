@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace CookieJar.Editor.Toast
 {
 	public static class ToastManager
 	{
 		//This is Just for testing
-		[MenuItem("Tools/Cookie Jar Tools/Example Notification")]
+		[MenuItem("Window/CookieJarTools/Example Notification")]
 		private static void ShowNot()
 		{
 			ShowNotification(new ToastArgs
@@ -38,6 +39,26 @@ namespace CookieJar.Editor.Toast
 				LifeTime = 3f,
 				Severity = ToastSeverity.Error
 			});
+			
+			ShowNotification(new ToastArgs
+			{
+				Title = "Example 4",
+				Message = "An example notification",
+				ToastPosition = ToastPosition.TopRight,
+				NoTimeOut = true,
+				Severity = ToastSeverity.Warning,
+				CustomContent = () =>
+				{
+					var container = new VisualElement();
+					
+					container.Add(new Label("Test Content"));
+					container.Add(new Label("Test Content2"));
+					
+					container.Add(new Button(){text = "Test Content3"});
+
+					return container;
+				}
+			});
 		}
 		
 		private const float NOTIFICATION_MARGIN = 5f;
@@ -57,12 +78,19 @@ namespace CookieJar.Editor.Toast
 		[InitializeOnLoadMethod]
 		private static void Init()
 		{
-			EditorApplication.update += CustomUpdateLoop;
-			EditorApplication.QueuePlayerLoopUpdate();
-			
 			AssemblyReloadEvents.beforeAssemblyReload += OnBeforeDomainReload;
 			
+			EnsureUpdateHook();
+			
+			EditorApplication.QueuePlayerLoopUpdate();
+			
 			audioClip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/NotificationSound.mp3");
+		}
+		
+		private static void EnsureUpdateHook()
+		{
+			EditorApplication.update -= CustomUpdateLoop;
+			EditorApplication.update += CustomUpdateLoop;
 		}
 		
 		private static void OnBeforeDomainReload()
@@ -201,6 +229,8 @@ namespace CookieJar.Editor.Toast
 			ToastArgs toastArgs,
 			Vector2 windowSize = default)
 		{
+			EnsureUpdateHook();
+			
 			//Create the window
 			var notification = ScriptableObject.CreateInstance<Toast>();
 			

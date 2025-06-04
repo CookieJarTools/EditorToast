@@ -1,4 +1,5 @@
-﻿using UnityEngine.UIElements;
+﻿using System;
+using UnityEngine.UIElements;
 
 namespace CookieJar.Editor.Toast
 {
@@ -8,7 +9,8 @@ namespace CookieJar.Editor.Toast
 		public string Message { get; set; }
 		public ToastPosition ToastPosition { get; set; }
 		public float LifeTime { get; set; }
-		public VisualElement CustomContent { get; set; }
+		public bool NoTimeOut { get; set; }
+		public Func<VisualElement> CustomContent { get; set; }
 		public ToastSeverity Severity { get; set; }
 	}
 }

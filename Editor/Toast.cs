@@ -54,7 +54,7 @@ namespace CookieJar.Editor.Toast
 
 			titleLabel.text = ToastArgs.Title;
 			messageLabel.text = ToastArgs.Message;
-			contentContainer.Add(ToastArgs.CustomContent);
+			contentContainer.Add(ToastArgs.CustomContent?.Invoke());
 			
 			var backgroundColor = ToastArgs.Severity switch
 			{
@@ -64,7 +64,8 @@ namespace CookieJar.Editor.Toast
 			};
 
 			lifetimeBar.lowValue = 0;
-			lifetimeBar.highValue = Data.ToastArgs.LifeTime;
+			var dataToastArgs = Data.ToastArgs;
+			lifetimeBar.value = lifetimeBar.highValue = dataToastArgs.NoTimeOut ? 1f : dataToastArgs.LifeTime;
 			
 			var lifetimeBarContainer = lifetimeBar.Children().First();
 			var lifetimeBarBackground = lifetimeBarContainer.Children().First();
@@ -230,6 +231,8 @@ namespace CookieJar.Editor.Toast
 
 		public bool IsLifetimeOver()
 		{
+			if (ToastArgs.NoTimeOut) return false;
+			
 			var currentLifeTime = Time.time - Data.TimeCreated;
 			lifetimeBar.value = ToastArgs.LifeTime - currentLifeTime;
 			return currentLifeTime > ToastArgs.LifeTime;
