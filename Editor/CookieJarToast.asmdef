@@ -1,6 +1,6 @@
 {
     "name": "CookieJarToast",
-    "rootNamespace": "",
+    "rootNamespace": "CookieJar.Editor.Toast",
     "references": [],
     "includePlatforms": [
         "Editor"

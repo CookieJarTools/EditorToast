@@ -1,10 +1,24 @@
-﻿{
-  "name": "editortoast",
+{
+  "name": "com.cookiejartools.editortoast",
   "version": "1.1.1",
-  "description": "A toast notification system for Unity",
+  "displayName": "Editor Toast",
+  "description": "Toast notifications for the Unity editor.",
+  "unity": "6000.0",
   "license": "MIT",
+  "author": {
+    "name": "CookieJarTools",
+    "url": "https://github.com/CookieJarTools"
+  },
+  "keywords": [
+    "notifications",
+    "editor",
+    "ui"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/CookieJarTools/EditorToast"
-  }
+  },
+  "documentationUrl": "https://github.com/CookieJarTools/EditorToast#readme",
+  "changelogUrl": "https://github.com/CookieJarTools/EditorToast/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/CookieJarTools/EditorToast/blob/main/LICENSE.md"
 }
