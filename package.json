@@ -4,7 +4,7 @@
   "displayName": "Editor Toast",
   "description": "Toast notifications for the Unity editor.",
   "unity": "6000.0",
-  "license": "PolyForm-Noncommercial-1.0.0",
+  "license": "PolyForm-Shield-1.0.0",
   "author": {
     "name": "CookieJarTools",
     "url": "https://github.com/CookieJarTools"

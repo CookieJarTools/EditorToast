@@ -55,5 +55,6 @@ It was written for the other CookieJar tools to use, and it is just as happy bei
 
 ## Licence
 
-Free for noncommercial use under the PolyForm Noncommercial License 1.0.0.
-Commercial use needs a licence, so get in touch. See [LICENSE.md](LICENSE.md).
+Free to use, including in games you sell, under the PolyForm Shield License 1.0.0.
+The one thing it does not allow is using it to make something that competes with the
+tool itself. See [LICENSE.md](LICENSE.md).
