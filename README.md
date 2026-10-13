@@ -55,4 +55,5 @@ It was written for the other CookieJar tools to use, and it is just as happy bei
 
 ## Licence
 
-MIT. See [LICENSE.md](LICENSE.md).
+Free for noncommercial use under the PolyForm Noncommercial License 1.0.0.
+Commercial use needs a licence, so get in touch. See [LICENSE.md](LICENSE.md).
