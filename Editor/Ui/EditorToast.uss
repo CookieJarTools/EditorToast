@@ -1,0 +1,199 @@
+/*
+ * Editor Toast, in the house style: a near-black card, a hairline round it, severity carried by a
+ * small tinted mark and a stripe down the edge rather than by a block of colour, and the close
+ * button kept out of sight until the pointer is on the toast.
+ *
+ * Stands on nothing else, so the package can be dropped into any project.
+ */
+
+.toast {
+    flex-grow: 1;
+    flex-direction: row;
+    background-color: #121317;
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.11);
+    border-radius: 10px;
+    overflow: hidden;
+    --toast-mark: #5e6ad2;
+    --toast-mark-soft: rgba(94, 106, 210, 0.16);
+    font-size: 12px;
+    color: #b4b8c0;
+}
+
+.toast Label {
+    color: #b4b8c0;
+}
+
+/* Severity is the one place colour is used, and only a little of it. */
+
+.toast--info {
+    --toast-mark: #5e6ad2;
+    --toast-mark-soft: rgba(94, 106, 210, 0.16);
+}
+
+.toast--warning {
+    --toast-mark: #d8a93f;
+    --toast-mark-soft: rgba(216, 169, 63, 0.16);
+}
+
+.toast--error {
+    --toast-mark: #e06c6c;
+    --toast-mark-soft: rgba(224, 108, 108, 0.16);
+}
+
+.toast--success {
+    --toast-mark: #4cb782;
+    --toast-mark-soft: rgba(76, 183, 130, 0.16);
+}
+
+/* A 2px stripe down the leading edge: enough to tell them apart down a stack. */
+
+.toast__stripe {
+    width: 2px;
+    flex-shrink: 0;
+    background-color: var(--toast-mark);
+}
+
+.toast__body {
+    flex-grow: 1;
+    padding: 10px 10px 8px 12px;
+}
+
+.toast__head {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.toast__icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    margin-right: 8px;
+    border-radius: 6px;
+    background-color: var(--toast-mark-soft);
+    align-items: center;
+    justify-content: center;
+}
+
+.toast__icon-image {
+    width: 12px;
+    height: 12px;
+    --unity-image-tint-color: var(--toast-mark);
+}
+
+.toast__title {
+    flex-grow: 1;
+    -unity-font-definition: resource("Fonts/Inter/Inter-SemiBold.ttf");
+    color: #edeef1;
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* How many times the same thing has happened, when they are being collapsed. */
+
+.toast__count {
+    flex-shrink: 0;
+    margin-left: 6px;
+    padding: 1px 6px;
+    border-radius: 7px;
+    font-size: 10px;
+    color: var(--toast-mark);
+    background-color: var(--toast-mark-soft);
+    display: none;
+}
+
+.toast__count--shown {
+    display: flex;
+}
+
+.toast__message {
+    flex-shrink: 0;
+    margin-top: 4px;
+    color: #b4b8c0;
+    white-space: normal;
+}
+
+.toast__content {
+    flex-shrink: 0;
+    margin-top: 6px;
+}
+
+/* The row of things you can do about it. Present only when there is an action. */
+
+.toast__actions {
+    flex-shrink: 0;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: 8px;
+    display: none;
+}
+
+.toast__actions--shown {
+    display: flex;
+}
+
+.toast__action {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.11);
+    border-radius: 6px;
+    padding: 3px 10px;
+    margin: 0;
+    color: #c3c9f7;
+    -unity-font-definition: resource("Fonts/Inter/Inter-SemiBold.ttf");
+    font-size: 11px;
+    transition-property: background-color, border-color, color;
+    transition-duration: 110ms;
+}
+
+.toast__action:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+/* Hidden until the pointer is on the toast, so a stack reads as content and not as buttons. */
+
+.toast__close {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    margin: 0;
+    border-width: 0;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0);
+    color: #767c87;
+    font-size: 11px;
+    opacity: 0;
+    transition-property: opacity, background-color, color;
+    transition-duration: 110ms;
+}
+
+.toast:hover .toast__close {
+    opacity: 1;
+}
+
+.toast__close:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #edeef1;
+}
+
+/* The time left, as a hairline along the bottom rather than a bar you watch. */
+
+.toast__life {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    background-color: var(--toast-mark);
+    opacity: 0.55;
+}
+
+.toast__life--paused {
+    opacity: 0.25;
+}

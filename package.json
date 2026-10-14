@@ -1,8 +1,8 @@
 {
   "name": "com.cookiejartools.editortoast",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "displayName": "Editor Toast",
-  "description": "Toast notifications for the Unity editor.",
+  "description": "Toast notifications for the Unity editor, for saying something without stopping the work.",
   "unity": "6000.0",
   "license": "PolyForm-Shield-1.0.0",
   "author": {
